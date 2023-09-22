@@ -45,4 +45,7 @@ INSERT INTO abstract_requests (request_id, requestor_id, reason, request_status,
 VALUES ('123e4567-e89b-12d3-a456-426655440000', 'b5092fa6-1c29-4eb1-95c9-7a6d8ec501e5', 'My wife will be entering labour, and I need to be there.', 'PENDING', '2023-09-22 10:00:00', null);
 
 
+-- Create query for shift_swap_requests
 
+INSERT INTO shift_swap_requests (request_id, requested_shift_id, proposed_shift_id)
+VALUES ('123e4567-e89b-12d3-a456-426655440000', 'a7d74f85-62e6-4c18-9df7-3b91f0a2d6e8', '123e4567-e89b-12d3-a456-426655440000');
