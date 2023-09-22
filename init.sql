@@ -80,6 +80,7 @@ DO $$ BEGIN
                                              "reason" VARCHAR(255),
                                              "request_status" VARCHAR(255),
                                              "time_created" TIMESTAMP,
+                                             "time_resolved" TIMESTAMP,
                                              PRIMARY KEY ("request_id"),
                                              CONSTRAINT "FK_abstract_requests.reqestor_id"
                                                  FOREIGN KEY ("reqestor_id")
@@ -108,6 +109,8 @@ DO $$ BEGIN
     IF NOT EXISTS (SELECT FROM pg_catalog.pg_tables WHERE schemaname = 'public' AND tablename = 'shift_swap_requests') THEN
         CREATE TABLE "shift_swap_requests" (
                                                "request_id" UUID,
+                                               "requested_shift_id" UUID,
+                                               "proposed_shift_id" UUID,
                                                PRIMARY KEY ("request_id"),
                                                CONSTRAINT "FK_shift_swap_requests.request_id"
                                                    FOREIGN KEY ("request_id")
@@ -120,6 +123,8 @@ DO $$ BEGIN
     IF NOT EXISTS (SELECT FROM pg_catalog.pg_tables WHERE schemaname = 'public' AND tablename = 'time_off_requests') THEN
         CREATE TABLE "time_off_requests" (
                                              "request_id" UUID,
+                                             "start_date" TIMESTAMP,
+                                             "end_date" TIMESTAMP,
                                              PRIMARY KEY ("request_id"),
                                              CONSTRAINT "FK_time_off_requests.request_id"
                                                  FOREIGN KEY ("request_id")
