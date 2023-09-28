@@ -76,14 +76,14 @@ DO $$ BEGIN
     IF NOT EXISTS (SELECT FROM pg_catalog.pg_tables WHERE schemaname = 'public' AND tablename = 'abstract_requests') THEN
         CREATE TABLE "abstract_requests" (
                                              "request_id" UUID,
-                                             "reqestor_id" UUID,
+                                             "requestor_id" UUID,
                                              "reason" VARCHAR(255),
                                              "request_status" VARCHAR(255),
                                              "time_created" TIMESTAMP,
                                              "time_resolved" TIMESTAMP,
                                              PRIMARY KEY ("request_id"),
                                              CONSTRAINT "FK_abstract_requests.reqestor_id"
-                                                 FOREIGN KEY ("reqestor_id")
+                                                 FOREIGN KEY ("requestor_id")
                                                      REFERENCES "users"("user_id")
         );
     END IF;
