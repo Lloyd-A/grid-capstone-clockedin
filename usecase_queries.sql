@@ -328,4 +328,107 @@ $$ LANGUAGE plpgsql;
 SELECT *
 FROM ViewTimeOffRequests('PENDING');
 
+--Function to approve a request
+CREATE OR REPLACE FUNCTION ApproveRequest(
+    n_request_id UUID
+)
+    RETURNS TEXT AS $$
+DECLARE
+    message TEXT;
+    request_exists BOOLEAN;
+BEGIN
+    -- Check if request exists
+    SELECT EXISTS (
+        SELECT 1
+        FROM abstract_requests
+        WHERE request_id = n_request_id
+    ) INTO request_exists;
+
+    IF request_exists THEN
+        -- Change request status to approved
+        UPDATE abstract_requests
+        SET request_status = 'APPROVED'
+        WHERE request_id = n_request_id;
+
+        message := 'Status Changed Successfully';
+    ELSE
+        message := 'Request does not exist';
+    END IF;
+
+    RETURN message;
+END;
+$$ LANGUAGE plpgsql;
+
+SELECT ApproveRequest('123e4567-e89b-12d3-a456-426655440000');
+
+
+--Function to deny a request
+
+CREATE OR REPLACE FUNCTION DenyRequest(
+    n_request_id UUID
+)
+    RETURNS TEXT AS $$
+DECLARE
+    message TEXT;
+    request_exists BOOLEAN;
+BEGIN
+    -- Check if request exists
+    SELECT EXISTS (
+        SELECT 1
+        FROM abstract_requests
+        WHERE request_id = n_request_id
+    ) INTO request_exists;
+
+    IF request_exists THEN
+        -- Change request status to DENIED
+        UPDATE abstract_requests
+        SET request_status = 'DENIED'
+        WHERE request_id = n_request_id;
+
+        message := 'Status Changed Successfully';
+    ELSE
+        message := 'Request does not exist';
+    END IF;
+
+    RETURN message;
+END;
+$$ LANGUAGE plpgsql;
+
+SELECT DenyRequest('123e4567-e89b-12d3-a456-426655440000');
+
+--Function to set a request to PENDING
+
+CREATE OR REPLACE FUNCTION PendRequest(
+    n_request_id UUID
+)
+    RETURNS TEXT AS $$
+DECLARE
+    message TEXT;
+    request_exists BOOLEAN;
+BEGIN
+    -- Check if request exists
+    SELECT EXISTS (
+        SELECT 1
+        FROM abstract_requests
+        WHERE request_id = n_request_id
+    ) INTO request_exists;
+
+    IF request_exists THEN
+        -- Change request status to DENIED
+        UPDATE abstract_requests
+        SET request_status = 'PENDING'
+        WHERE request_id = n_request_id;
+
+        message := 'Status Changed Successfully';
+    ELSE
+        message := 'Request does not exist';
+    END IF;
+
+    RETURN message;
+END;
+$$ LANGUAGE plpgsql;
+
+SELECT PendRequest('123e4567-e89b-12d3-a456-426655440000');
+
+
 
