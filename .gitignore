@@ -32,7 +32,7 @@ target/
 # Compiled Files
 *.class
 .env
-src/main/resources/database.properties
+*.properties
 bin/
 build/
 /bin1/
