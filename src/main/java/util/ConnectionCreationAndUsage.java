@@ -8,7 +8,7 @@ import java.util.function.Function;
 
 public final class ConnectionCreationAndUsage {
 
-    private static Connection connection;
+    public static Connection connection;
     private static String url;
     private static String username;
     private static String password;
@@ -47,7 +47,7 @@ public final class ConnectionCreationAndUsage {
     /**
      * Closes the connection held by attribute connection.
      * */
-    private static void closeConnection() {
+    public static void closeConnection() {
         try{
             connection.close();
         }
@@ -69,13 +69,10 @@ public final class ConnectionCreationAndUsage {
             for (int i = 0; i < args.length; i++) {
                 preparedstatement.setObject(i + 1, args[i]);
             }
-            preparedstatement.executeUpdate();
+            preparedstatement.execute();
         }
         catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-        finally {
-            closeConnection();
+            System.out.println("SQL Exception");
         }
     }
 
@@ -89,13 +86,10 @@ public final class ConnectionCreationAndUsage {
         establishConnection();
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             preparedStatementConsumer.accept(preparedStatement);
-            preparedStatement.executeUpdate();
+            preparedStatement.execute();
         }
         catch (SQLException e) {
             System.out.println(e.getMessage());
-        }
-        finally {
-            closeConnection();
         }
     }
 
@@ -119,22 +113,17 @@ public final class ConnectionCreationAndUsage {
                 preparedstatement.setObject(i + 1, args[i]);
             }
             ResultSet resultSet = preparedstatement.executeQuery();
-            if (!resultSet.next()) {
-                System.out.println("Nothing in ResultSet");
-            }
-            else if (resultSet.next()) {
+            if (resultSet.next()) {
                 result = mapper.apply(resultSet);
-                if (resultSet.next()){
+                if (resultSet.next()) {
                     throw new RuntimeException("ResultSet returned more than one results for query");
                 }
+            } else {
+                System.out.println("Nothing in ResultSet");
             }
-            //TODO: check for more than one and handle it
         }
         catch (SQLException e) {
             System.out.println(e.getMessage());
-        }
-        finally {
-            closeConnection();
         }
         return result;
     }
@@ -165,10 +154,18 @@ public final class ConnectionCreationAndUsage {
         catch (SQLException e) {
             System.out.println(e.getMessage());
         }
-        finally {
-            closeConnection();
-        }
         return result;
 
+    }
+
+    public static String getSchema() throws SQLException {
+        establishConnection();
+        return connection.getSchema();
+    }
+    public static boolean tableExists(String tableName) throws  SQLException {
+        establishConnection();
+
+        // Check if the specified table exists in the database
+        return connection.getMetaData().getTables(null, null, tableName, null).next();
     }
 }
