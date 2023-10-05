@@ -15,59 +15,59 @@ import java.util.function.Function;
 public class UserDAO <T extends User>{
 
     public Optional<T> getUserById(UUID userId) {
-        setDBParameters();
+        //setDBParameters();
 
         String getUserQuery = "SELECT * FROM users WHERE user_id = ?";
         Function<ResultSet, T> mapper = userMapper();
 
         T user = ConnectionCreationAndUsage.findOne(getUserQuery, mapper, userId);
-        ConnectionCreationAndUsage.closeConnection();
+
         return Optional.ofNullable(user);
     }
 
     public Optional<T> getUserByUniversityId(Long universityId) {
-        setDBParameters();
+        //setDBParameters();
 
         String getUserQuery = "SELECT * FROM users WHERE university_id = ?";
         Function<ResultSet, T> mapper = userMapper();
 
         T user = ConnectionCreationAndUsage.findOne(getUserQuery, mapper, universityId);
-        ConnectionCreationAndUsage.closeConnection();
+
         return Optional.ofNullable(user);
     }
 
     public Iterable<T> getAllUsers() {
-        setDBParameters();
+        //setDBParameters();
         String getAllUsersQuery = "SELECT * FROM users";
         Function<ResultSet, T> mapper = userMapper();
 
         List<T> users = ConnectionCreationAndUsage.findMany(getAllUsersQuery, mapper);
-        ConnectionCreationAndUsage.closeConnection();
+
         return users;
     }
 
     public void createUser(User user) {
-        setDBParameters();
+        //setDBParameters();
         String insertUserQuery = "INSERT INTO users VALUES (?,?,?,?,?,?,?)";
         ConnectionCreationAndUsage.execute(insertUserQuery, user.getUserID(),user.getUniversityID(), user.getFirstName(),
                 user.getLastName(), user.getUserRole(), user.getPhoneNum(), user.getEmail());
-        ConnectionCreationAndUsage.closeConnection();
+
     }
 
     public void updateUser(User user) {
-        setDBParameters();
+        //setDBParameters();
         String updateUserQuery = "UPDATE users SET first_name=?, last_name=?, user_role=?, phone_num=?, email=? " +
                 "WHERE user_id=?";
         ConnectionCreationAndUsage.execute(updateUserQuery, user.getFirstName(), user.getLastName(), user.getUserRole(),
                 user.getPhoneNum(), user.getEmail(), user.getUserID());
-        ConnectionCreationAndUsage.closeConnection();
+
     }
 
     public void deleteUser(UUID userId) {
-        setDBParameters();
+        //setDBParameters();
         String deleteUserQuery = "DELETE FROM users WHERE user_id=?";
         ConnectionCreationAndUsage.execute(deleteUserQuery, userId);
-        ConnectionCreationAndUsage.closeConnection();
+
     }
 
     /**
@@ -93,8 +93,8 @@ public class UserDAO <T extends User>{
             return mappedUser;
         };
     }
-    protected void setDBParameters(){
+    /*protected void setDBParameters(){
         ConnectionCreationAndUsage
                 .setUpDatabaseConnnection("jdbc:postgresql://localhost:5432/postgres", "myuser", "mypassword");
-    }
+    }*/
 }

@@ -1,10 +1,13 @@
 package util;
 
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
 import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -13,7 +16,7 @@ import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class ConnectionCreationAndUsageTest {
 
@@ -26,9 +29,10 @@ class ConnectionCreationAndUsageTest {
 
     @BeforeAll
      static void setUp() throws SQLException, IOException {
-        ConnectionCreationAndUsage.setUpDatabaseConnnection("jdbc:h2:~/test", "sa", "");
+        ConnectionCreationAndUsage.setUpDatabaseConnnection();
         // Read the initialization script from the file
-        BufferedReader reader = new BufferedReader(new FileReader("/Users/lallen/Documents/clocked-in/src/main/resources/connection_creation_and_usage_h2/init.sql"));
+        InputStream in = ConnectionCreationAndUsageTest.class.getResourceAsStream("/connection_creation_and_usage_h2/init.sql");
+        BufferedReader reader = new BufferedReader(new InputStreamReader(in));
         StringBuilder script = new StringBuilder();
         String line;
         while ((line = reader.readLine()) != null) {
@@ -39,10 +43,6 @@ class ConnectionCreationAndUsageTest {
         ConnectionCreationAndUsage.execute(script.toString());
     }
 
-    @AfterEach
-    void tearDown() {
-        ConnectionCreationAndUsage.closeConnection();
-    }
 
     //    @Test
 //    void tables() throws SQLException {
@@ -60,7 +60,7 @@ class ConnectionCreationAndUsageTest {
         //when
         ConnectionCreationAndUsage.execute(insertIntoCars, args);
 
-        try(Statement statement = ConnectionCreationAndUsage.connection.createStatement()) {
+        try(Statement statement = ConnectionCreationAndUsage.getConnection().createStatement()) {
             String selectQuery = "SELECT * FROM cars WHERE vin_id = 4";
             try(ResultSet resultSet = statement.executeQuery(selectQuery)) {
                 while (resultSet.next()) {
@@ -97,7 +97,7 @@ class ConnectionCreationAndUsageTest {
         //when
         ConnectionCreationAndUsage.execute(insertIntoCars, preparedStatementConsumer);
 
-        try(Statement statement = ConnectionCreationAndUsage.connection.createStatement()) {
+        try(Statement statement = ConnectionCreationAndUsage.getConnection().createStatement()) {
             String selectQuery = "SELECT * FROM cars WHERE vin_id = 5";
             try(ResultSet resultSet = statement.executeQuery(selectQuery)) {
                 while (resultSet.next()) {

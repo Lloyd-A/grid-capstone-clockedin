@@ -1,33 +1,53 @@
 package util;
 
+import com.clockedIn.side_tasks.Connection_Pooling.PooledDataSource;
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
+
+import javax.sql.DataSource;
+import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
 public final class ConnectionCreationAndUsage {
 
-    public static Connection connection;
-    private static String url;
-    private static String username;
-    private static String password;
+
+    private static DataSource ds;
 
     /**
      * Constructor is private to ensure the class cannot be instantiated as it is a utility class.
      * */
     private ConnectionCreationAndUsage(){}
 
+    public static DataSource getDs() {
+        return ds;
+    }
+
     /**
      * Sets the attribute fields necessary to establish a connection to a database
-     * @param url Url to the database with which a connection is desired.
-     * @param username Username required to access the database.
-     * @param password Password required to access the database.
      * */
-    public static void setUpDatabaseConnnection(String url, String username, String password) {
-        ConnectionCreationAndUsage.url = url;
-        ConnectionCreationAndUsage.username = username;
-        ConnectionCreationAndUsage.password = password;
+    public static synchronized void setUpDatabaseConnnection() {
+        HikariConfig config = new HikariConfig();
+        Properties props = new Properties();
+
+        try {
+            props.load(PooledDataSource.class.getResourceAsStream("/dbdb.properties"));
+            String databaseURL = props.getProperty("dbURL");
+            String databaseUsername = props.getProperty("dbUser");
+            String databasePassword = props.getProperty("dbPassword");
+            config.setJdbcUrl(databaseURL);
+            config.setUsername(databaseUsername);
+            config.setPassword(databasePassword);
+
+            ds = new HikariDataSource(config);
+        } catch (IOException e){
+            e.printStackTrace();
+        }
+
     }
 
     /**
@@ -35,26 +55,20 @@ public final class ConnectionCreationAndUsage {
      * and password via DriverManager.getConnection(String url, String username, String password). The established
      * connection is then stored in the attribute connection.
      * */
-    private static void establishConnection() {
+    public static Connection getConnection() {
+        if (ds == null) {
+            setUpDatabaseConnnection();
+        }
         try {
-            connection = DriverManager.getConnection(url, username, password);
+            return getDs().getConnection();
         }
         catch (SQLException e) {
             System.out.println(e.getMessage());
         }
+        return null;
     }
 
-    /**
-     * Closes the connection held by attribute connection.
-     * */
-    public static void closeConnection() {
-        try{
-            connection.close();
-        }
-        catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
+
 
     /**
      * Creates a PreparedStatement object and passes arguments to it using its setObject() method. The PreparedStatement
@@ -64,15 +78,19 @@ public final class ConnectionCreationAndUsage {
      *             precompiled PreparedStatement object.
      * */
     public static void execute(String query, Object... args) {
-        establishConnection();
-        try (PreparedStatement preparedstatement = connection.prepareStatement(query)) {
-            for (int i = 0; i < args.length; i++) {
-                preparedstatement.setObject(i + 1, args[i]);
+        try (Connection currentConnection = getConnection()) {
+            if (currentConnection != null) {
+                try (PreparedStatement preparedstatement = currentConnection.prepareStatement(query)) {
+                    for (int i = 0; i < args.length; i++) {
+                        preparedstatement.setObject(i + 1, args[i]);
+                    }
+                    preparedstatement.execute();
+                } catch (SQLException e) {
+                    System.out.println("SQL Exception");
+                }
             }
-            preparedstatement.execute();
-        }
-        catch (SQLException e) {
-            System.out.println("SQL Exception");
+        } catch (SQLException sql) {
+            sql.printStackTrace();
         }
     }
 
@@ -83,12 +101,16 @@ public final class ConnectionCreationAndUsage {
      * @param preparedStatementConsumer Consumer used to replace all '?' in the PreparedStatement object with arguments.
      * */
     public static void execute(String query, Consumer<PreparedStatement> preparedStatementConsumer) {
-        establishConnection();
-        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-            preparedStatementConsumer.accept(preparedStatement);
-            preparedStatement.execute();
-        }
-        catch (SQLException e) {
+        try (Connection currentConnection = getConnection()) {
+            if (currentConnection != null) {
+                try (PreparedStatement preparedStatement = currentConnection.prepareStatement(query)) {
+                    preparedStatementConsumer.accept(preparedStatement);
+                    preparedStatement.execute();
+                } catch (SQLException e) {
+                    System.out.println(e.getMessage());
+                }
+            }
+        } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
     }
@@ -107,24 +129,28 @@ public final class ConnectionCreationAndUsage {
      * */
     public static <T> T findOne(String query, Function<ResultSet, T> mapper, Object... args) {
         T result = null;
-        establishConnection();
-        try (PreparedStatement preparedstatement = connection.prepareStatement(query)) {
-            for (int i = 0; i < args.length; i++) {
-                preparedstatement.setObject(i + 1, args[i]);
-            }
-            ResultSet resultSet = preparedstatement.executeQuery();
-            if (resultSet.next()) {
-                result = mapper.apply(resultSet);
-                if (resultSet.next()) {
-                    throw new RuntimeException("ResultSet returned more than one results for query");
+            try (Connection currentConnection = getConnection()) {
+                if (currentConnection != null) {
+                    try (PreparedStatement preparedstatement = currentConnection.prepareStatement(query)) {
+                        for (int i = 0; i < args.length; i++) {
+                            preparedstatement.setObject(i + 1, args[i]);
+                        }
+                        ResultSet resultSet = preparedstatement.executeQuery();
+                        if (resultSet.next()) {
+                            result = mapper.apply(resultSet);
+                            if (resultSet.next()) {
+                                throw new RuntimeException("ResultSet returned more than one results for query");
+                            }
+                        } else {
+                            System.out.println("Nothing in ResultSet");
+                        }
+                    } catch (SQLException e) {
+                        System.out.println(e.getMessage());
+                    }
                 }
-            } else {
-                System.out.println("Nothing in ResultSet");
-            }
-        }
-        catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
+            } catch (SQLException e) {
+                    System.out.println(e.getMessage());
+                }
         return result;
     }
 
@@ -139,33 +165,27 @@ public final class ConnectionCreationAndUsage {
      * @return List of entities returned from database as objects
      * */
     public static <T> List<T> findMany(String query, Function<ResultSet, T> mapper, Object... args) {
-        establishConnection();
         List<T> result = new ArrayList<>();
-        establishConnection();
-        try (PreparedStatement preparedstatement = connection.prepareStatement(query)) {
-            for (int i = 0; i < args.length; i++) {
-                preparedstatement.setObject(i + 1, args[i]);
+        try (Connection currentConnection = getConnection()) {
+            if (currentConnection != null) {
+                try (PreparedStatement preparedstatement = currentConnection.prepareStatement(query)) {
+                    for (int i = 0; i < args.length; i++) {
+                        preparedstatement.setObject(i + 1, args[i]);
+                    }
+                    ResultSet resultSet = preparedstatement.executeQuery();
+                    while (resultSet.next()) {
+                        result.add(mapper.apply(resultSet));
+                    }
+                } catch (SQLException e) {
+                    System.out.println(e.getMessage());
+                }
             }
-            ResultSet resultSet = preparedstatement.executeQuery();
-            while (resultSet.next()) {
-                result.add(mapper.apply(resultSet));
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
-        }
-        catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
         return result;
 
     }
 
-    public static String getSchema() throws SQLException {
-        establishConnection();
-        return connection.getSchema();
-    }
-    public static boolean tableExists(String tableName) throws  SQLException {
-        establishConnection();
 
-        // Check if the specified table exists in the database
-        return connection.getMetaData().getTables(null, null, tableName, null).next();
-    }
 }

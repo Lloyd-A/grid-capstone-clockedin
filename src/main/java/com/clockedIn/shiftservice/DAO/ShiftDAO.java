@@ -14,60 +14,60 @@ import java.util.function.Function;
 public class ShiftDAO {
 
     public Optional<Shift> getShiftById(UUID shiftId) {
-        setDBParameters();
+        //setDBParameters();
 
         String getShiftQuery = "SELECT * FROM shifts s JOIN locations l ON s.location_id=l.location_id " +
                 "WHERE shift_id = ?";
         Function<ResultSet, Shift> mapper = shiftMapper();
 
         Shift shift = ConnectionCreationAndUsage.findOne(getShiftQuery, mapper, shiftId);
-        ConnectionCreationAndUsage.closeConnection();
+
         return Optional.ofNullable(shift);
     }
 
     public Optional<Shift> getShiftByCourse(Course course) {
-        setDBParameters();
+        //setDBParameters();
 
         String getShiftByCourseQuery = "SELECT * FROM shifts WHERE course_enum = ?";
         Function<ResultSet, Shift> mapper = shiftMapper();
 
         Shift shift = ConnectionCreationAndUsage.findOne(getShiftByCourseQuery, mapper, course);
-        ConnectionCreationAndUsage.closeConnection();
+
         return Optional.ofNullable(shift);
     }
 
     public Iterable<Shift> getAllShifts() {
-        setDBParameters();
+        //setDBParameters();
         String getAllShiftsQuery = "SELECT * FROM shifts s JOIN locations l ON s.location_id=l.location_id";
         Function<ResultSet, Shift> mapper = shiftMapper();
 
         List<Shift> shifts = ConnectionCreationAndUsage.findMany(getAllShiftsQuery, mapper);
-        ConnectionCreationAndUsage.closeConnection();
+
         return shifts;
     }
 
     public void createShift(Shift shift) {
-        setDBParameters();
+        //setDBParameters();
         String insertShiftQuery = "INSERT INTO shifts VALUES (?,?,?,?,?)";
         ConnectionCreationAndUsage.execute(insertShiftQuery, shift.getShiftId(),shift.getStartTime(), shift.getEndTime(),
                 shift.getLocation().getLocationId(), shift.getCourseEnum());
-        ConnectionCreationAndUsage.closeConnection();
+
     }
 
     public void updateShift(Shift shift) {
-        setDBParameters();
+        //setDBParameters();
         String updateShiftQuery = "UPDATE shifts SET start_time=?, end_time=?, location_id=?, course_enum=? " +
                 "WHERE shift_id=?";
         ConnectionCreationAndUsage.execute(updateShiftQuery, shift.getStartTime(), shift.getEndTime(), shift.getLocation().getLocationId(),
                 shift.getCourseEnum(), shift.getShiftId());
-        ConnectionCreationAndUsage.closeConnection();
+
     }
 
     public void deleteShift(UUID shiftId) {
-        setDBParameters();
+        //setDBParameters();
         String deleteShiftQuery = "DELETE FROM shifts WHERE shift_id=?";
         ConnectionCreationAndUsage.execute(deleteShiftQuery, shiftId);
-        ConnectionCreationAndUsage.closeConnection();
+
     }
 
     /**
@@ -113,8 +113,8 @@ public class ShiftDAO {
         };
     }
 
-    private void setDBParameters(){
+    /*private void setDBParameters(){
         ConnectionCreationAndUsage
                 .setUpDatabaseConnnection("jdbc:postgresql://localhost:5432/postgres", "myuser", "mypassword");
-    }
+    }*/
 }
