@@ -8,10 +8,10 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.UUID;
 
-public class Tasks {
+public class Task1 {
     PooledDataSource dataSource;
 
-    public Tasks() {
+    public Task1() {
         this.dataSource = new PooledDataSource();
     }
 
@@ -80,8 +80,8 @@ public class Tasks {
 
     }
     public static void main(String[] args) {
-        Tasks tasks = new Tasks();
-        tasks.shiftInsertNoTransaction();
-        tasks.shiftInsertWithTransaction();
+        Task1 task1 = new Task1();
+        task1.shiftInsertNoTransaction();
+        task1.shiftInsertWithTransaction();
     }
 }

@@ -77,6 +77,7 @@ DO $$ BEGIN
         CREATE TABLE "abstract_requests" (
                                              "request_id" UUID,
                                              "requestor_id" UUID,
+                                             "action_performed_by" UUID,
                                              "reason" VARCHAR(255),
                                              "request_status" VARCHAR(255),
                                              "time_created" TIMESTAMP,
@@ -84,6 +85,9 @@ DO $$ BEGIN
                                              PRIMARY KEY ("request_id"),
                                              CONSTRAINT "FK_abstract_requests.reqestor_id"
                                                  FOREIGN KEY ("requestor_id")
+                                                     REFERENCES "users"("user_id"),
+                                             CONSTRAINT "FK_abstract_requests.action_performed_by"
+                                                 FOREIGN KEY ("action_performed_by")
                                                      REFERENCES "users"("user_id")
         );
     END IF;
