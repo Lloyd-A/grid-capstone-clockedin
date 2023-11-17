@@ -26,6 +26,7 @@ commit will only happen when the labtech shift insert occurs.
 
 If there is an error then rollback will happen in the catch statement 
 This simulates a transaction.
+
 ![Sample Image](inconsistentWithTransaction.png)
 
 As expected, the `shifts` table does not have the new record.

@@ -1,6 +1,6 @@
 package com.clockedIn.shiftservice;
 
-import com.clockedIn.userservice.patterns.observers.Observer;
+import com.clockedIn.userservice.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -20,7 +20,7 @@ public class Shift {
     private LocalDateTime endTime;
     private Location location;
     private Enum<Course> courseEnum;
-    private Map<UUID, Observer> labTechs;
+    private Map<UUID, User> labTechs;
 
 
 

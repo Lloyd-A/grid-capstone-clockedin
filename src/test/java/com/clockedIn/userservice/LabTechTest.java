@@ -5,10 +5,12 @@ import com.clockedIn.notificationservice.EmailNotificationService;
 import com.clockedIn.shiftservice.Shift;
 import com.clockedIn.userservice.patterns.commands.ApproveRequestCommand;
 import com.clockedIn.userservice.patterns.commands.DenyRequestCommand;
-import com.clockedIn.userservice.patterns.observers.Observer;
+import com.clockedIn.userservice.services.LabTechService;
+import com.clockedIn.userservice.services.LabTechServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
@@ -17,13 +19,14 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.mock;
 
 @ExtendWith(MockitoExtension.class)
 class LabTechTest {
 
     LabTech testLabTech;
-    EmailNotificationService emailNotificationService = mock(EmailNotificationService.class);
+    EmailNotificationService emailNotificationService = Mockito.mock(EmailNotificationService.class);
+
+    LabTechService labTechService;
     AbstractRequest shiftSwapApproved;
     AbstractRequest shiftSwapDenied;
     AbstractRequest shiftSwapPending;
@@ -73,6 +76,9 @@ class LabTechTest {
                 .denyCommand(new DenyRequestCommand())
                 .approveCommand(new ApproveRequestCommand())
                 .build();
+
+        labTechService = new LabTechServiceImpl(emailNotificationService);
+
     }
     @Test
     void updateRequestList() {
@@ -123,12 +129,12 @@ class LabTechTest {
         AbstractRequest labTechRequest;
 
         //when
-        labTechRequest = testLabTech.makeShiftChangeRequest(Shift.builder()
+        labTechRequest = labTechService.makeShiftChangeRequest(Shift.builder()
                 .shiftId(UUID.randomUUID())
                 .build(), Shift.builder()
                 .shiftId(UUID.randomUUID())
                 .labTechs(new HashMap<>())
-                .build(), "I am feeling sick");
+                .build(), "I am feeling sick", testLabTech);
         doNothing().when(emailNotificationService).addObserver(labTechRequest.getRequester());
         doNothing().when(emailNotificationService).send(labTechRequest);
         doNothing().when(emailNotificationService).clearObservers();
@@ -147,7 +153,7 @@ class LabTechTest {
         AbstractRequest labTechRequest;
 
         //when
-        labTechRequest = testLabTech.makeTimeOffRequest(new ArrayList<Observer>(), "Need a break from work.");
+        labTechRequest = labTechService.makeTimeOffRequest(new ArrayList<User>(), "Need a break from work.", testLabTech);
         doNothing().when(emailNotificationService).addObserver(labTechRequest.getRequester());
         doNothing().when(emailNotificationService).send(labTechRequest);
         doNothing().when(emailNotificationService).clearObservers();
