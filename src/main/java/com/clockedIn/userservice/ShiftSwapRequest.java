@@ -10,7 +10,7 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @SuperBuilder
 @Data
-@ToString(callSuper = true)
+//@ToString(callSuper = false)
 public class ShiftSwapRequest extends AbstractRequest{
     Shift requestedShift;
     Shift proposedShift;
@@ -34,6 +34,10 @@ public class ShiftSwapRequest extends AbstractRequest{
     @Override
     public RequestStatus getStatus() {
         return getRequestStatus();
+    }
+
+    public String toString() {
+        return requestedShift.getShiftId() +" ////" + proposedShift.getShiftId();
     }
 
 }

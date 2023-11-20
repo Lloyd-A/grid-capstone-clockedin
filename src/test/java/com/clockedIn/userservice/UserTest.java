@@ -2,9 +2,12 @@ package com.clockedIn.userservice;
 
 
 import com.clockedIn.notificationservice.EmailNotificationService;
+import com.clockedIn.notificationservice.NotificationService;
 import com.clockedIn.userservice.patterns.commands.ApproveRequestCommand;
 import com.clockedIn.userservice.patterns.commands.DenyRequestCommand;
-import org.junit.jupiter.api.*;
+import com.clockedIn.userservice.services.UserServiceImpl;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -13,15 +16,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.mock;
 
 @ExtendWith(MockitoExtension.class)
 class UserTest {
 
     User testUser;
     List<AbstractRequest> requestList;
-    EmailNotificationService emailNotificationService = mock(EmailNotificationService.class);
+    NotificationService emailNotificationService = mock(EmailNotificationService.class);
+    UserServiceImpl userService = new UserServiceImpl(emailNotificationService);
 
     @BeforeEach
     void setUp() {
@@ -58,6 +63,7 @@ class UserTest {
                          .denyCommand(new DenyRequestCommand())
                          .approveCommand(new ApproveRequestCommand())
                          .build();
+
     }
 
     @Test
@@ -70,7 +76,7 @@ class UserTest {
             doNothing().when(emailNotificationService).send(request);
             doNothing().when(emailNotificationService).clearObservers();
 
-            testUser.approveRequest(request);
+            userService.approveRequest(request, testUser);
         }
 
         //then
@@ -93,7 +99,7 @@ class UserTest {
             doNothing().when(emailNotificationService).send(request);
             doNothing().when(emailNotificationService).clearObservers();
 
-            testUser.denyRequest(request);
+            userService.denyRequest(request, testUser);
         }
 
         //then
@@ -115,7 +121,7 @@ class UserTest {
         request.deny();
 
         //when
-        testUser.approveRequest(request);
+        userService.approveRequest(request, testUser);
 
         //then
         assertEquals(RequestStatus.DENIED, request.getRequestStatus());
@@ -131,7 +137,7 @@ class UserTest {
         request.approve();
 
         //when
-        testUser.denyRequest(request);
+        userService.denyRequest(request, testUser);
 
         //then
         assertEquals(RequestStatus.APPROVED, request.getRequestStatus());

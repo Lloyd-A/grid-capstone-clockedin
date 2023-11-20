@@ -17,7 +17,7 @@ public class Task4 {
         try (
                 Connection conn = dataSource.getConnection();
                 Statement stmt = conn.createStatement()) {
-            stmt.execute("DROP INDEX IF EXISTS idx_university_id");
+            stmt.execute("DROP INDEX IF EXISTS idx_universityid_email");
             // Create compound index on shifts_labtechs table
             stmt.execute("CREATE INDEX idx_universityId_email ON users(university_id, email)");
 

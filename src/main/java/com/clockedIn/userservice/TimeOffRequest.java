@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @SuperBuilder
 @Data
-@ToString(callSuper = true)
+@ToString(callSuper = false)
 public class TimeOffRequest extends AbstractRequest{
     private LocalDateTime startTime;
     private LocalDateTime endTime;

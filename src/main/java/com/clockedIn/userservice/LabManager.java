@@ -1,6 +1,5 @@
 package com.clockedIn.userservice;
 
-import com.clockedIn.userservice.patterns.observers.Observer;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -10,9 +9,6 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @Data
 @ToString(callSuper = true)
-public class LabManager extends User implements Observer {
+public class LabManager extends User{
     private String test;
-
-
-
 }
