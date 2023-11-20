@@ -1,15 +1,17 @@
-package com.clockedIn.shiftservice.services;
+package com.clockedIn.shiftservice.services.collection;
 
-import com.clockedIn.shiftservice.Course;
-import com.clockedIn.shiftservice.Shift;
+import com.clockedIn.shiftservice.model.Course;
+import com.clockedIn.shiftservice.model.Shift;
 import com.clockedIn.shiftservice.repositories.ShiftRepository;
+import org.springframework.stereotype.Service;
 
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-public class ShiftCollectionService implements ShiftRepository<Shift, UUID> {
+@Service
+public class ShiftCollectionService implements ShiftRepository {
     private final Map<UUID, Shift> shiftHashMap;
 
     public ShiftCollectionService(Map<UUID, Shift> shiftHashMap) {
