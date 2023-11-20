@@ -1,7 +1,7 @@
 package com.clockedIn.userservice.services;
 
 import com.clockedIn.notificationservice.NotificationService;
-import com.clockedIn.shiftservice.Shift;
+import com.clockedIn.shiftservice.model.Shift;
 import com.clockedIn.userservice.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

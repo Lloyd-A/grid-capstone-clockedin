@@ -1,7 +1,7 @@
-package com.clockedIn.shiftservice.services;
+package com.clockedIn.shiftservice.services.collection;
 
-import com.clockedIn.shiftservice.Course;
-import com.clockedIn.shiftservice.Shift;
+import com.clockedIn.shiftservice.model.Course;
+import com.clockedIn.shiftservice.model.Shift;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

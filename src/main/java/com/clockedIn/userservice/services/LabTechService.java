@@ -1,6 +1,6 @@
 package com.clockedIn.userservice.services;
 
-import com.clockedIn.shiftservice.Shift;
+import com.clockedIn.shiftservice.model.Shift;
 import com.clockedIn.userservice.AbstractRequest;
 import com.clockedIn.userservice.LabTech;
 import com.clockedIn.userservice.User;

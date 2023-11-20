@@ -1,11 +1,13 @@
 package com.clockedIn.userservice;
 
 
-import com.clockedIn.shiftservice.Shift;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+
+import com.clockedIn.shiftservice.model.Shift;
 import lombok.experimental.SuperBuilder;
 import org.springframework.stereotype.Component;
 

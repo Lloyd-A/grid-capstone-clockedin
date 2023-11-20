@@ -35,7 +35,7 @@ public final class ConnectionCreationAndUsage {
         Properties props = new Properties();
 
         try {
-            props.load(PooledDataSource.class.getResourceAsStream("/dbdb.properties"));
+            props.load(PooledDataSource.class.getResourceAsStream("/application-local.properties"));
             String databaseURL = props.getProperty("dbURL");
             String databaseUsername = props.getProperty("dbUser");
             String databasePassword = props.getProperty("dbPassword");
