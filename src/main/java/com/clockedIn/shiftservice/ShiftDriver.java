@@ -1,6 +1,8 @@
 package com.clockedIn.shiftservice;
 
-import com.clockedIn.shiftservice.services.ShiftCollectionService;
+import com.clockedIn.shiftservice.model.Course;
+import com.clockedIn.shiftservice.model.Shift;
+import com.clockedIn.shiftservice.services.collection.ShiftCollectionService;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;

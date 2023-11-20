@@ -26,7 +26,7 @@ public class SingleDataSourceImpl implements DataSource {
             if (connection == null) {
                 Properties props = new Properties();
                 try {
-                    props.load(SingleDataSourceImpl.class.getResourceAsStream("/database.properties"));
+                    props.load(SingleDataSourceImpl.class.getResourceAsStream("/application-dev.properties"));
                     String databaseURL = props.getProperty("dbURL");
                     String databaseUsername = props.getProperty("dbUser");
                     String databasePassword = props.getProperty("dbPassword");

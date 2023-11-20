@@ -20,7 +20,7 @@ public class PooledDataSource implements DataSource{
 
         Properties props = new Properties();
         try {
-            props.load(PooledDataSource.class.getResourceAsStream("/database.properties"));
+            props.load(PooledDataSource.class.getResourceAsStream("/application-dev.properties"));
             String databaseURL = props.getProperty("dbURL");
             String databaseUsername = props.getProperty("dbUser");
             String databasePassword = props.getProperty("dbPassword");

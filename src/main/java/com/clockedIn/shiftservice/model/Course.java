@@ -1,4 +1,4 @@
-package com.clockedIn.shiftservice;
+package com.clockedIn.shiftservice.model;
 
 public enum Course {
     COMP1126,

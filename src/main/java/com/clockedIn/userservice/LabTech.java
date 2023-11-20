@@ -1,6 +1,6 @@
 package com.clockedIn.userservice;
 
-import com.clockedIn.shiftservice.Shift;
+import com.clockedIn.shiftservice.model.Shift;
 import com.clockedIn.userservice.patterns.observers.Observer;
 import lombok.*;
 import lombok.experimental.SuperBuilder;

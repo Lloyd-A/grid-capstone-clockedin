@@ -1,4 +1,4 @@
-package com.clockedIn.shiftservice;
+package com.clockedIn.shiftservice.model;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
