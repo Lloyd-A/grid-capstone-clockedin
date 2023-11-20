@@ -2,6 +2,7 @@ package com.clockedIn.notificationservice;
 
 import com.clockedIn.userservice.AbstractRequest;
 import com.clockedIn.userservice.patterns.observers.Observer;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,6 +11,7 @@ import java.util.List;
  * A class representing an Email Notification Service that implements the NotificationService interface.
  * This service allows observers to be notified of requests via email.
  */
+@Service
 public class EmailNotificationService implements NotificationService {
     private final List<Observer> observers = new ArrayList<>();
 

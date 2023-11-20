@@ -2,14 +2,19 @@ package com.clockedIn.userservice;
 
 
 import com.clockedIn.shiftservice.Shift;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+import org.springframework.stereotype.Component;
 
 @EqualsAndHashCode(callSuper = true)
 @AllArgsConstructor
 @NoArgsConstructor
 @SuperBuilder
 @Data
+@Component
 //@ToString(callSuper = false)
 public class ShiftSwapRequest extends AbstractRequest{
     Shift requestedShift;

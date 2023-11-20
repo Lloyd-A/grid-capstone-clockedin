@@ -2,6 +2,7 @@ package com.clockedIn.userservice;
 
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 
@@ -11,6 +12,7 @@ import java.time.LocalDateTime;
 @SuperBuilder
 @Data
 @ToString(callSuper = false)
+@Component
 public class TimeOffRequest extends AbstractRequest{
     private LocalDateTime startTime;
     private LocalDateTime endTime;

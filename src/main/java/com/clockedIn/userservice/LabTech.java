@@ -3,6 +3,7 @@ package com.clockedIn.userservice;
 import com.clockedIn.userservice.patterns.observers.Observer;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,6 +16,7 @@ import java.util.UUID;
 @SuperBuilder
 @Data
 @ToString(callSuper = false)
+@Component
 public class LabTech extends User implements Observer {
     private Map<RequestStatus, HashMap<UUID, AbstractRequest>> myRequests;
 
